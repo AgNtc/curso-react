@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ListaDeNotas from "./componentes/ListaDeNotas";
 import FormularioCadastro from "./componentes/FormularioCadastro";
+<<<<<<< HEAD
 import ListaDeCategorias from "./componentes/ListaDeCategorias";
 import "./assets/app.css"
 import './assets/index.css';
@@ -33,6 +34,16 @@ class App extends Component {
           notas={this.notas}/>
         </main>
       </section>
+=======
+
+class App extends Component {
+  render() {
+    return (
+      <main>
+        <FormularioCadastro />
+        <ListaDeNotas />
+      </main>
+>>>>>>> 0efbcd5b897b89e806b63198cb6b31422bf72878
     );
   }
 }
