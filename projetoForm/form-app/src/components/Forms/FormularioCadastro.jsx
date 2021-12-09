@@ -1,35 +1,88 @@
-import Button from "@material-ui/core/Button"
-import TextField  from "@material-ui/core/TextField";
+import {React,  useState} from 'react';
+import {TextField, Button, Checkbox, FormControlLabel}  from "@material-ui/core";
 
-function FormularioCadastro() {
+  
+function FormularioCadastro({aoEnviar}) {
+  const [nome, setNome]= useState("");
+  const [cpf, setCPF] = useState("");
+  const [dataNasc, setDataNasc] = useState("");
+  const [file, setFile] = useState("");
+  const [confirma, setConfirma] = useState(false);
+
     return (
-      <form>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          aoEnviar({nome, cpf, dataNasc, file, confirma});
+        }}
+      >
         <TextField
-          id="outlined-basic"
-          placeholder="Informe seu Nome"
+          value={nome}
+          onChange={(event) => {
+            setNome(event.target.value);
+          }}
+          id="nome"
           label="Nome Completo"
           size="small"
           variant="outlined"
+          margin="normal"
+          required
+          fullWidth
         />
-
-        <label>CPF</label>
         <TextField
-          id="outlined-basic"
-          placeholder="Informe seu CPF"
+          value={cpf}
+          onChange={(event) => {
+            let tmpCPF = event.target.value;
+            if (tmpCPF.length === 11) {
+              tmpCPF = tmpCPF.substr(0, 3);
+            }
+            setCPF(tmpCPF);
+          }}
+          id="cpf"
           label="CPF"
+          size="small"
+          margin="normal"
+          variant="outlined"
+          required
+          fullWidth
+        />
+        <TextField
+          value={dataNasc}
+          onChange={(event) => {
+            setDataNasc(event.target.value);
+          }}
+          type="date"
+          required
+          fullWidth
+          margin="normal"
           size="small"
           variant="outlined"
         />
-
-        <label>Data de Nascimento</label>
-        <input type="date" />
-
-        <label>Faça upload da sua foto</label>
-        <input type="file" />
-
-        <label>Aceita exibir seus dados nesse Site</label>
-        <input type="checkbox" />
-
+        <TextField
+          value={file}
+          onChange={(event) => {
+            setFile(event.target.value);
+          }}
+          type="file"
+          fullWidth
+          margin="normal"
+          size="small"
+          variant="outlined"
+        />
+        <FormControlLabel
+          label="Concordo em gravar meus dados nesse Site"
+          control={
+            <Checkbox
+            checked={confirma}
+              onChange={(event) => {
+                setConfirma(event.target.checked);
+              }}
+              name="Aceito"
+              color="primary"
+              required
+            />
+          }
+        />
         <Button variant="contained" color="primary" type="submit">
           Cadastrar
         </Button>
