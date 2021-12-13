@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { useHistory } from 'react-dom';
-
 import FormularioCadastro from './components/Forms/FormularioCadastro';
 import {Container, Typography, Paper}  from '@material-ui/core';
 import '@fontsource/zen-kurenaido'
@@ -26,19 +24,15 @@ class  App extends Component{
 
 async function enviarForm(dados) {
   console.log(JSON.stringify(dados));
-  const history = useHistory
-  const options ={
-    'headers': {
-      'Content-Type': 'application/json'
-    },
-    'body': dados
-  }
-
-  await api.post("/pessoa", options )
-    .then((response)=>{
-        history.push('/')
-    })  
+  const response = await api.post("/pessoa", {
+       nome: dados.nome,
+       cpf: dados.cpf,
+       datanascimento: dados.datanascimento,
+       caminhoFoto: dados.caminhoFoto
+    });
+    return response
 }
+
 
 function validarCPF(cpf){
   if(cpf.length !== 11){
