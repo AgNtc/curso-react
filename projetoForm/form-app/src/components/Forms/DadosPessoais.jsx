@@ -1,17 +1,12 @@
-import { React, useState } from "react";
-import {
-  TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
-} from "@material-ui/core";
+import { React, useState, useContext } from "react";
+import {TextField, Button} from "@material-ui/core";
+import ValidacoesCadastro from "../../context/ValidacoesCadastro";
+import useErros from "../../hooks/useErros";
 
-function FormularioCadastro({ aoEnviar, validaCpfDigitos }) {
+function FormularioCadastro({ aoEnviar }) {
   const [nome, setNome] = useState("");
   const [cpf, setCPF] = useState("");
   const [datanascimento, setDataNasc] = useState("");
-  const [confirma, setConfirma] = useState(false);
-  const [erros, setErros] = useState({ cpf: { valido: true, texto: "" } });
   const [imagem, setImagem] = useState("");
   const [caminhoFoto] = useState("./user-avatar.png");
   //isso aqui é o mesmo que passar só o objeto aoEnviar como estou fazendo lá em cima
@@ -19,11 +14,16 @@ function FormularioCadastro({ aoEnviar, validaCpfDigitos }) {
   //ao passar o aoEnviar como objeto desconstruido eu nao preciso ficar fazendo isso que eu fiz no codigo para cada propriedade recebida
   //posso fazer desconstrução do objeto para ficar mais facil de receber as propriedades
 
+  const validacoes= useContext(ValidacoesCadastro)
+  const [erros, validarCampos, enviaReq]= useErros(validacoes);
+    
   return (
     <form
       onSubmit={(event) => {
         event.preventDefault();
-        aoEnviar({ nome, cpf, datanascimento, caminhoFoto });
+        if (enviaReq()) {
+          aoEnviar({ nome, cpf, datanascimento, caminhoFoto });
+        }
       }}
     >
       <TextField
@@ -31,7 +31,11 @@ function FormularioCadastro({ aoEnviar, validaCpfDigitos }) {
         onChange={(event) => {
           setNome(event.target.value);
         }}
+        onBlur={validarCampos}
+        error={!erros.nome.valido}
+        helperText={erros.nome.texto}
         id="nome"
+        name="nome"
         label="Nome Completo"
         size="small"
         variant="outlined"
@@ -44,13 +48,11 @@ function FormularioCadastro({ aoEnviar, validaCpfDigitos }) {
         onChange={(event) => {
           setCPF(event.target.value);
         }}
-        onBlur={(event) => {
-          const totalDigitosValidados = validaCpfDigitos(cpf);
-          setErros({ cpf: totalDigitosValidados });
-        }}
+        onBlur={validarCampos}
         error={!erros.cpf.valido}
         helperText={erros.cpf.texto}
         id="cpf"
+        name="cpf"
         label="CPF"
         size="small"
         margin="normal"
@@ -64,6 +66,7 @@ function FormularioCadastro({ aoEnviar, validaCpfDigitos }) {
           setDataNasc(event.target.value);
         }}
         type="date"
+        name="data"
         required
         fullWidth
         margin="normal"
@@ -95,20 +98,6 @@ function FormularioCadastro({ aoEnviar, validaCpfDigitos }) {
         <img src={caminhoFoto} alt="Imagem" width="150" height="150" />
       )}
       <br />
-      <FormControlLabel
-        label="Concordo em gravar meus dados nesse Site"
-        control={
-          <Checkbox
-            checked={confirma}
-            onChange={(event) => {
-              setConfirma(event.target.checked);
-            }}
-            name="Aceito"
-            color="primary"
-            required
-          />
-        }
-      />
       <Button
         variant="contained"
         color="primary"
@@ -116,7 +105,7 @@ function FormularioCadastro({ aoEnviar, validaCpfDigitos }) {
         size="large"
         className="btnCadastrar"
       >
-        Cadastrar
+        Próximo
       </Button>
     </form>
   );

@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import FormularioCadastro from './components/Forms/FormularioCadastro';
 import {Container, Typography, Paper}  from '@material-ui/core';
 import '@fontsource/zen-kurenaido'
-
+import { validarCPF, validarSenha } from './models/cadastro';
 import api from "./config/configApi";
+import ValidacoesCadastro from './context/ValidacoesCadastro';
 
 class  App extends Component{
   render(){
@@ -14,7 +15,15 @@ class  App extends Component{
           <Typography variant="h3" component="h1" align="center" >
               Formulário de Cadastro
           </Typography>
-          <FormularioCadastro aoEnviar={enviarForm} validaCpfDigitos={validarCPF}/>
+          < ValidacoesCadastro.Provider value={
+            {
+              cpf: validarCPF,
+              senha: validarSenha,
+              nome: validarSenha
+            }
+          } >
+            <FormularioCadastro aoEnviar={enviarForm}/>
+          </ValidacoesCadastro.Provider>
         </Container>
       </Paper>
     </Container>
@@ -23,7 +32,7 @@ class  App extends Component{
 }
 
 async function enviarForm(dados) {
-  console.log(JSON.stringify(dados));
+  console.log(dados);
   const response = await api.post("/pessoa", {
        nome: dados.nome,
        cpf: dados.cpf,
@@ -31,22 +40,6 @@ async function enviarForm(dados) {
        caminhoFoto: dados.caminhoFoto
     });
     return response
-}
-
-
-function validarCPF(cpf){
-  if(cpf.length !== 11){
-    return {
-       valido:false,
-       texto:"Cpf deve ter 11 digitos digitos"
-      }
-  }
-  else{
-    return {
-      valido: true,
-      texto: ""
-    }
-  }
 }
 
 export default App;
